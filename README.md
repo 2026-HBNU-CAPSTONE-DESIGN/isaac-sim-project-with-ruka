@@ -60,5 +60,6 @@ isaaclab.bat -p scripts\tutorials\00_sim\create_empty.py
 # 손만 움직이기
 .\isaaclab.bat -p C:\isaac\isaac-lab-capstone-project\scripts\test_joints.py --mode hand
 
-# 손과 팔 움직이기(22관절 손 )
+# 손과 팔 움직이기(22관절 손+팔)
+.\isaaclab.bat -p C:\isaac\isaac-lab-capstone-project\scripts\test_joints.py --mode all
 ```
