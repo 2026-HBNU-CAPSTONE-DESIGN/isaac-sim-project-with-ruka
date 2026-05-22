@@ -1,0 +1,520 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="ruka_left_hand">
+  <material name="ruka_grey">
+    <color rgba="0.439 0.475 0.502 1" />
+  </material>
+  <link name="base_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.001" />
+      <inertia ixx="1e-06" ixy="0" ixz="0" iyy="1e-06" iyz="0" izz="1e-06" />
+    </inertial>
+  </link>
+  <joint name="base_to_palm" type="fixed">
+    <parent link="base_link" />
+    <child link="Palm_Link" />
+    <origin xyz="0 0 0" rpy="3.14159265 0 0" />
+  </joint>
+  <link name="Palm_Link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.05" />
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001" />
+    </inertial>
+    <visual name="Palm">
+      <origin xyz="0 0 0" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="meshes_left/Palm.STL" />
+      </geometry>
+      <material name="ruka_grey">
+        <color rgba="0.439 0.475 0.502 1" />
+      </material>
+    </visual>
+    <collision name="Palm_c">
+      <origin xyz="-0.004 0.009 -0.02" rpy="0 -0 0" />
+      <geometry>
+        <box size="0.084 0.021 0.116" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Index_MCP_Joint" type="revolute">
+    <parent link="Palm_Link" />
+    <child link="Index_MCP_Link" />
+    <origin xyz="-0.0322 0.0146007 -0.08022" rpy="2.53259463 1.36009924 -2.12570493" />
+    <axis xyz="0 1 0" />
+    <limit lower="-2.44222" upper="-0" effort="10" velocity="10" />
+    <dynamics damping="0.05" friction="0.01" />
+  </joint>
+  <link name="Index_MCP_Link">
+    <inertial>
+      <origin xyz="-0.0288724 -1.28993e-08 0.00378475" rpy="0 0 0" />
+      <mass value="0.00327912" />
+      <inertia ixx="1.41290423e-07" ixy="0" ixz="8.23038687e-10" iyy="3.58574e-07" iyz="0" izz="4.20814577e-07" />
+    </inertial>
+    <collision name="Index_MCP_C">
+      <origin xyz="0.016 0.005 0.0001" rpy="0 -0 0" />
+      <geometry>
+        <box size="0.03 0.014 0.01" />
+      </geometry>
+    </collision>
+    <visual name="Index_MCP">
+      <origin xyz="0.046 0.005 -0.003" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="meshes_left/Index_MCP.STL" />
+      </geometry>
+      <material name="ruka_grey">
+        <color rgba="0.439 0.475 0.502 1" />
+      </material>
+    </visual>
+  </link>
+  <joint name="Index_DIP_Joint" type="revolute">
+    <parent link="Index_MCP_Link" />
+    <child link="Index_DIP_Link" />
+    <origin xyz="0.035057 0 0.002" rpy="0 -0.174529998 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-2.09" upper="-0" effort="10" velocity="10" />
+    <dynamics damping="0.05" friction="0.01" />
+  </joint>
+  <link name="Index_DIP_Link">
+    <inertial>
+      <origin xyz="-0.000734414 -1.34435e-07 0.00333493" rpy="0 0 0" />
+      <mass value="0.0030053" />
+      <inertia ixx="9.14346587e-08" ixy="0" ixz="-9.51029437e-09" iyy="2.50136e-07" iyz="0" izz="2.77490141e-07" />
+    </inertial>
+    <visual name="Index_DIP">
+      <origin xyz="0.012 0.005 -0.003" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="meshes_left/Index_DIP.STL" />
+      </geometry>
+      <material name="ruka_grey">
+        <color rgba="0.439 0.475 0.502 1" />
+      </material>
+    </visual>
+    <collision name="Index_DIP_c">
+      <origin xyz="0.012 0.005 0" rpy="0 -0 0" />
+      <geometry>
+        <box size="0.034 0.014 0.01" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Index_PIP_Joint" type="revolute">
+    <parent link="Index_DIP_Link" />
+    <child link="Index_PIP_Link" />
+    <origin xyz="0.027 0.0045 0.001" rpy="0 -0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-2.09" upper="-0" effort="10" velocity="10" />
+    <dynamics damping="0.05" friction="0.01" />
+  </joint>
+  <link name="Index_PIP_Link">
+    <inertial>
+      <origin xyz="0.0274083 1.00211e-07 0.00320314" rpy="0 0 0" />
+      <mass value="0.00356977" />
+      <inertia ixx="1.11979619e-07" ixy="-1.93265309e-12" ixz="1.23407277e-08" iyy="2.91756e-07" iyz="1.0799934e-13" izz="3.32127381e-07" />
+    </inertial>
+    <visual name="Index_PIP">
+      <origin xyz="-0.013 0.0004 -0.005" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="meshes_left/Index_PIP.STL" />
+      </geometry>
+      <material name="ruka_grey">
+        <color rgba="0.439 0.475 0.502 1" />
+      </material>
+    </visual>
+    <collision name="Index_PIP_c">
+      <origin xyz="0.015 0.0004 -0.002" rpy="0 -0 0" />
+      <geometry>
+        <box size="0.029 0.014 0.01" />
+      </geometry>
+    </collision>
+    <visual name="Index_TIP">
+      <origin xyz="0.03 0 0" rpy="0 -0 0" />
+      <geometry>
+        <sphere radius="0.001" />
+      </geometry>
+    </visual>
+  </link>
+  <joint name="Middle_MCP_Joint" type="revolute">
+    <parent link="Palm_Link" />
+    <child link="Middle_MCP_Link" />
+    <origin xyz="-0.01518 0.0135414 -0.081" rpy="-1.57079633 1.57079633 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-2.44222" upper="-0" effort="10" velocity="10" />
+    <dynamics damping="0.05" friction="0.01" />
+  </joint>
+  <link name="Middle_MCP_Link">
+    <inertial>
+      <origin xyz="-0.0288724 -9.49408e-09 0.00378477" rpy="0 0 0" />
+      <mass value="0.00327911" />
+      <inertia ixx="1.41290423e-07" ixy="0" ixz="8.23032798e-10" iyy="3.58572e-07" iyz="0" izz="4.20812577e-07" />
+    </inertial>
+    <visual name="Middle_MCP">
+      <origin xyz="0.046 0 -0.003" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="meshes_left/Middle_MCP.STL" />
+      </geometry>
+      <material name="ruka_grey">
+        <color rgba="0.439 0.475 0.502 1" />
+      </material>
+    </visual>
+    <collision name="Middle_MCP_c">
+      <origin xyz="0.016 0 0.0001" rpy="0 -0 0" />
+      <geometry>
+        <box size="0.034 0.014 0.01" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Middle_DIP_Joint" type="revolute">
+    <parent link="Middle_MCP_Link" />
+    <child link="Middle_DIP_Link" />
+    <origin xyz="0.034 0 0" rpy="0 -0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-2.09" upper="-0" effort="10" velocity="10" />
+    <dynamics damping="0.05" friction="0.01" />
+  </joint>
+  <link name="Middle_DIP_Link">
+    <inertial>
+      <origin xyz="-0.000734412 -1.31357e-07 0.00333494" rpy="0 0 0" />
+      <mass value="0.0030053" />
+      <inertia ixx="9.14347584e-08" ixy="0" ixz="-9.51028928e-09" iyy="2.50136e-07" iyz="0" izz="2.77490142e-07" />
+    </inertial>
+    <visual name="Middle_DIP">
+      <origin xyz="0.012 0 -0.003" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="meshes_left/Middle_DIP.STL" />
+      </geometry>
+      <material name="ruka_grey">
+        <color rgba="0.439 0.475 0.502 1" />
+      </material>
+    </visual>
+    <collision name="Middle_DIP_c">
+      <origin xyz="0.012 0 0" rpy="0 -0 0" />
+      <geometry>
+        <box size="0.034 0.014 0.01" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Middle_PIP_Joint" type="revolute">
+    <parent link="Middle_DIP_Link" />
+    <child link="Middle_PIP_Link" />
+    <origin xyz="0.026 0 0.002" rpy="0 -0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-2.09" upper="-0" effort="10" velocity="10" />
+    <dynamics damping="0.05" friction="0.01" />
+  </joint>
+  <link name="Middle_PIP_Link">
+    <inertial>
+      <origin xyz="0.0274083 9.97469e-08 0.00320314" rpy="0 0 0" />
+      <mass value="0.00356977" />
+      <inertia ixx="1.11979619e-07" ixy="-1.75842084e-12" ixz="1.23407277e-08" iyy="2.91756e-07" iyz="9.82628583e-14" izz="3.32127381e-07" />
+    </inertial>
+    <visual name="Middle_PIP">
+      <origin xyz="-0.014 0 -0.0045" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="meshes_left/Middle_PIP.STL" />
+      </geometry>
+      <material name="ruka_grey">
+        <color rgba="0.439 0.475 0.502 1" />
+      </material>
+    </visual>
+    <collision name="Middle_PIP_c">
+      <origin xyz="0.015 0.0004 -0.002" rpy="0 -0 0" />
+      <geometry>
+        <box size="0.029 0.014 0.01" />
+      </geometry>
+    </collision>
+    <visual name="Middle_TIP">
+      <origin xyz="0.029 0 0" rpy="0 -0 0" />
+      <geometry>
+        <sphere radius="0.001" />
+      </geometry>
+    </visual>
+  </link>
+  <joint name="Ring_MCP_Joint" type="revolute">
+    <parent link="Palm_Link" />
+    <child link="Ring_MCP_Link" />
+    <origin xyz="0.0088 0.01453 -0.08009" rpy="-1.28059549 1.45980129 0.348614064" />
+    <axis xyz="0 1 0" />
+    <limit lower="-2.44222" upper="-0" effort="10" velocity="10" />
+    <dynamics damping="0.05" friction="0.01" />
+  </joint>
+  <link name="Ring_MCP_Link">
+    <inertial>
+      <origin xyz="-0.0288724 -7.11557e-09 0.00378476" rpy="0 0 0" />
+      <mass value="0.00327912" />
+      <inertia ixx="1.41290423e-07" ixy="0" ixz="8.23038687e-10" iyy="3.58574e-07" iyz="0" izz="4.20814577e-07" />
+    </inertial>
+    <visual name="Ring_MCP">
+      <origin xyz="0.046 0 -0.004" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="meshes_left/Ring_MCP.STL" />
+      </geometry>
+      <material name="ruka_grey">
+        <color rgba="0.439 0.475 0.502 1" />
+      </material>
+    </visual>
+    <collision name="Ring_MCP_c">
+      <origin xyz="0.016 0 0.0001" rpy="0 -0 0" />
+      <geometry>
+        <box size="0.03 0.014 0.01" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Ring_DIP_Joint" type="revolute">
+    <parent link="Ring_MCP_Link" />
+    <child link="Ring_DIP_Link" />
+    <origin xyz="0.036 0 0" rpy="0 -0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-2.09" upper="-0" effort="10" velocity="10" />
+    <dynamics damping="0.05" friction="0.01" />
+  </joint>
+  <link name="Ring_DIP_Link">
+    <inertial>
+      <origin xyz="-0.000734409 -1.29347e-07 0.00333494" rpy="0 0 0" />
+      <mass value="0.00300529" />
+      <inertia ixx="9.14347584e-08" ixy="0" ixz="-9.51028928e-09" iyy="2.50136e-07" iyz="0" izz="2.77490142e-07" />
+    </inertial>
+    <visual name="Ring_DIP">
+      <origin xyz="0.01 0 -0.004" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="meshes_left/Ring_DIP.STL" />
+      </geometry>
+      <material name="ruka_grey">
+        <color rgba="0.439 0.475 0.502 1" />
+      </material>
+    </visual>
+    <collision name="Ring_DIP_c">
+      <origin xyz="0.01 0 0" rpy="0 -0 0" />
+      <geometry>
+        <box size="0.03 0.014 0.01" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Ring_PIP_Joint" type="revolute">
+    <parent link="Ring_DIP_Link" />
+    <child link="Ring_PIP_Link" />
+    <origin xyz="0.025746 0 0" rpy="0 -0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-2.09" upper="-0" effort="10" velocity="10" />
+    <dynamics damping="0.05" friction="0.01" />
+  </joint>
+  <link name="Ring_PIP_Link">
+    <inertial>
+      <origin xyz="0.0274083 1.00945e-07 0.00320315" rpy="0 0 0" />
+      <mass value="0.00356976" />
+      <inertia ixx="1.1197958e-07" ixy="-1.68673134e-12" ixz="1.23403521e-08" iyy="2.91756e-07" iyz="9.42545028e-14" izz="3.3212642e-07" />
+    </inertial>
+    <visual name="Ring_PIP">
+      <origin xyz="-0.015 0 -0.005" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="meshes_left/Ring_PIP.STL" />
+      </geometry>
+      <material name="ruka_grey">
+        <color rgba="0.439 0.475 0.502 1" />
+      </material>
+    </visual>
+    <collision name="Ring_PIP_c">
+      <origin xyz="0.013 0.0001 -0.0017" rpy="0 -0 0" />
+      <geometry>
+        <box size="0.028 0.014 0.01" />
+      </geometry>
+    </collision>
+    <visual name="Ring_TIP">
+      <origin xyz="0.028 0 0" rpy="0 -0 0" />
+      <geometry>
+        <sphere radius="0.001" />
+      </geometry>
+    </visual>
+  </link>
+  <joint name="Pinky_MCP_Joint" type="revolute">
+    <parent link="Palm_Link" />
+    <child link="Pinky_MCP_Link" />
+    <origin xyz="0.030617 0.020313 -0.07398" rpy="-1.14039703 1.36180011 0.55660297" />
+    <axis xyz="0 1 0" />
+    <limit lower="-2.44222" upper="-0" effort="10" velocity="10" />
+    <dynamics damping="0.05" friction="0.01" />
+  </joint>
+  <link name="Pinky_MCP_Link">
+    <inertial>
+      <origin xyz="-0.0268917 -2.1328e-08 0.00337657" rpy="0 0 0" />
+      <mass value="0.00308279" />
+      <inertia ixx="1.30752033e-07" ixy="-1.67729172e-12" ixz="-2.08801325e-09" iyy="3.31476e-07" iyz="-1.36821654e-14" izz="3.86700967e-07" />
+    </inertial>
+    <visual name="Pinky_MCP">
+      <origin xyz="0.042 0 -0.004" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="meshes_left/Pinky_MCP.STL" />
+      </geometry>
+      <material name="ruka_grey">
+        <color rgba="0.439 0.475 0.502 1" />
+      </material>
+    </visual>
+    <collision name="Pinky_MCP_c">
+      <origin xyz="0.014 0 0" rpy="0 -0 0" />
+      <geometry>
+        <box size="0.034 0.014 0.01" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Pinky_DIP_Joint" type="revolute">
+    <parent link="Pinky_MCP_Link" />
+    <child link="Pinky_DIP_Link" />
+    <origin xyz="0.032 0 0" rpy="0 -0.0277350847 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-2.09" upper="-0" effort="10" velocity="10" />
+    <dynamics damping="0.05" friction="0.01" />
+  </joint>
+  <link name="Pinky_DIP_Link">
+    <inertial>
+      <origin xyz="-0.000757212 -1.38277e-07 0.00329943" rpy="0 0 0" />
+      <mass value="0.00260945" />
+      <inertia ixx="7.77156573e-08" ixy="0" ixz="-8.13321083e-09" iyy="1.89485e-07" iyz="0" izz="2.12042343e-07" />
+    </inertial>
+    <visual name="Pinky_DIP">
+      <origin xyz="0.01 0 -0.0037" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="meshes_left/Pinky_DIP.STL" />
+      </geometry>
+      <material name="ruka_grey">
+        <color rgba="0.439 0.475 0.502 1" />
+      </material>
+    </visual>
+    <collision name="Pinky_DIP_c">
+      <origin xyz="0.01 0 0" rpy="0 -0 0" />
+      <geometry>
+        <box size="0.03 0.014 0.01" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Pinky_PIP_Joint" type="revolute">
+    <parent link="Pinky_DIP_Link" />
+    <child link="Pinky_PIP_Link" />
+    <origin xyz="0.023 0 0.001" rpy="0 -0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-2.09" upper="-0" effort="10" velocity="10" />
+    <dynamics damping="0.05" friction="0.01" />
+  </joint>
+  <link name="Pinky_PIP_Link">
+    <inertial>
+      <origin xyz="0.0236575 -8.70958e-08 0.00338829" rpy="0 0 0" />
+      <mass value="0.00306875" />
+      <inertia ixx="9.65855589e-08" ixy="-1.43811057e-12" ixz="6.92874012e-09" iyy="1.96147e-07" iyz="7.42142439e-14" izz="2.30492441e-07" />
+    </inertial>
+    <visual name="Pinky_PIP">
+      <origin xyz="-0.013 0 -0.005" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="meshes_left/Pinky_PIP.STL" />
+      </geometry>
+      <material name="ruka_grey">
+        <color rgba="0.439 0.475 0.502 1" />
+      </material>
+    </visual>
+    <collision name="Pinky_PIP_c">
+      <origin xyz="0.0125 0.0001 -0.0017" rpy="0 -0 0" />
+      <geometry>
+        <box size="0.021 0.014 0.01" />
+      </geometry>
+    </collision>
+    <visual name="Pinky_TIP">
+      <origin xyz="0.024 0 0" rpy="0 -0 0" />
+      <geometry>
+        <sphere radius="0.001" />
+      </geometry>
+    </visual>
+  </link>
+  <joint name="Thumb_CMC_Joint" type="revolute">
+    <parent link="Palm_Link" />
+    <child link="Thumb_MCP_Link" />
+    <origin xyz="-0.037688 0.022225 -0.025118" rpy="-1.57079916 9.63556251e-08 -0.0318549558" />
+    <axis xyz="0 1 0" />
+    <limit lower="-0" upper="3.314" effort="10" velocity="10" />
+    <dynamics damping="0.05" friction="0.01" />
+  </joint>
+  <link name="Thumb_MCP_Link">
+    <inertial>
+      <origin xyz="-0.0162526 -0.00468252 0.00333969" rpy="0 0 0" />
+      <mass value="0.00526715" />
+      <inertia ixx="3.78342689e-07" ixy="-3.4535164e-09" ixz="-5.79254673e-08" iyy="5.49214734e-07" iyz="1.80650659e-10" izz="7.44165578e-07" />
+    </inertial>
+    <visual name="Thumb_MCP">
+      <origin xyz="0 0 -0.007" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="meshes_left/Thumb_MCP.STL" />
+      </geometry>
+      <material name="ruka_grey">
+        <color rgba="0.439 0.475 0.502 1" />
+      </material>
+    </visual>
+    <collision name="Thumb_MCP_c">
+      <origin xyz="-0.013 -0.003 -0.0032" rpy="0 -0 0" />
+      <geometry>
+        <box size="0.04 0.027 0.01" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Thumb_MCP_Joint" type="revolute">
+    <parent link="Thumb_MCP_Link" />
+    <child link="Thumb_DIP_Link" />
+    <origin xyz="-0.033935 -0.0044094 -0.0065999" rpy="1.57079067 7.50547535e-12 3.14158531" />
+    <axis xyz="0 1 0" />
+    <limit lower="-1.57" upper="-0" effort="10" velocity="10" />
+    <dynamics damping="0.05" friction="0.01" />
+  </joint>
+  <link name="Thumb_DIP_Link">
+    <inertial>
+      <origin xyz="0.000359156 5.0434e-05 0.00349653" rpy="0 0 0" />
+      <mass value="0.0033002" />
+      <inertia ixx="1.24638475e-07" ixy="9.75172684e-10" ixz="-2.30332076e-09" iyy="2.79541579e-07" iyz="5.24312214e-10" izz="3.34593945e-07" />
+    </inertial>
+    <visual name="Thumb_DIP">
+      <origin xyz="0.013 0 -0.0019" rpy="-0.799999365 -0 0" />
+      <geometry>
+        <mesh filename="meshes_left/Thumb_DIP.STL" />
+      </geometry>
+      <material name="ruka_grey">
+        <color rgba="0.439 0.475 0.502 1" />
+      </material>
+    </visual>
+    <collision name="Thumb_DIP_c">
+      <origin xyz="0.013 0.003 0.0005" rpy="-0.799999365 -0 0" />
+      <geometry>
+        <box size="0.03 0.014 0.01" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="Thumb_IP_Joint" type="revolute">
+    <parent link="Thumb_DIP_Link" />
+    <child link="Thumb_PIP_Link" />
+    <origin xyz="0.027794 0.0035 7e-06" rpy="-0.78539962 -0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-2.09" upper="-0" effort="10" velocity="10" />
+    <dynamics damping="0.05" friction="0.01" />
+  </joint>
+  <link name="Thumb_PIP_Link">
+    <inertial>
+      <origin xyz="0.0282104 -4.96887e-08 0.00319437" rpy="0 0 0" />
+      <mass value="0.00347336" />
+      <inertia ixx="1.22784449e-07" ixy="3.67581857e-12" ixz="1.15066299e-08" iyy="2.59469e-07" iyz="-2.23121257e-13" izz="3.11652551e-07" />
+    </inertial>
+    <visual name="Thumb_PIP">
+      <origin xyz="-0.015 0 -0.005" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="meshes_left/Thumb_PIP.STL" />
+      </geometry>
+      <material name="ruka_grey">
+        <color rgba="0.439 0.475 0.502 1" />
+      </material>
+    </visual>
+    <collision name="Thumb_PIP_c">
+      <origin xyz="0.013 0 -0.0017" rpy="0 -0 0" />
+      <geometry>
+        <box size="0.026 0.015 0.01" />
+      </geometry>
+    </collision>
+    <visual name="Thumb_TIP">
+      <origin xyz="0.028 0 0" rpy="0 -0 0" />
+      <geometry>
+        <sphere radius="0.001" />
+      </geometry>
+    </visual>
+  </link>
+</robot>
