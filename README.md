@@ -58,10 +58,16 @@ isaaclab.bat -p scripts\tutorials\00_sim\create_empty.py
 ```powershell
 # 팔만 움직이기
 .\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\test_joints.py --mode arm
+.\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\test_joints.py --mode arm
 
 # 손만 움직이기
+.\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\test_joints.py --mode hand
 .\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\test_joints.py --mode hand
 
 # 손과 팔 움직이기(22관절 손+팔)
 .\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\test_joints.py --mode all
+# 손과 팔 움직이기(22관절 손+팔)
+.\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\test_joints.py --mode all
 ```
+
+-

@@ -6,7 +6,7 @@ G1 + RUKA 왼손 USD 로드 테스트 스크립트 (IsaacLab 2.1.0)
 
 실행:
   cd C:\isaac\IsaacLab
-  .\isaaclab.bat -p C:\isaac\isaac-lab-capstone-project\scripts\check_robot.py
+  .\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\check_robot.py
 """
 
 import argparse
@@ -17,7 +17,7 @@ parser = argparse.ArgumentParser(description="G1+RUKA USD 로드 테스트")
 parser.add_argument(
     "--usd",
     type=str,
-    default=r"C:\isaac\isaac-lab-capstone-project\combined\g1_left_arm_ruka_final.usd",
+    default=r"C:\isaac\isaac-sim-project-with-ruka\combined\g1_left_arm_ruka_final.usd",
     help="로드할 USD 경로",
 )
 AppLauncher.add_app_launcher_args(parser)

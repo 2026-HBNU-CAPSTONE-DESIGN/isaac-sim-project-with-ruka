@@ -1,5 +1,5 @@
-asset_path: C:\isaac\isaac-lab-capstone-project\combined\g1_left_arm_ruka_final.urdf
-usd_dir: C:\isaac\isaac-lab-capstone-project\combined
+asset_path: C:\isaac\isaac-sim-project-with-ruka\combined\g1_left_arm_ruka_final.urdf
+usd_dir: C:\isaac\isaac-sim-project-with-ruka\combined
 usd_file_name: g1_left_arm_ruka_final.usd
 force_usd_conversion: true
 make_instanceable: true
