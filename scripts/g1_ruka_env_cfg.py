@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 import isaaclab.sim as sim_utils
-from isaaclab.assets import ArticulationCfg, AssetBaseCfg
+from isaaclab.assets import ArticulationCfg, AssetBaseCfg, RigidObjectCfg
 from isaaclab.envs import ManagerBasedRLEnvCfg
 from isaaclab.managers import ActionTermCfg as ActionTerm
 from isaaclab.managers import EventTermCfg as EventTerm
@@ -12,6 +12,7 @@ from isaaclab.managers import ObservationGroupCfg as ObsGroup
 from isaaclab.managers import ObservationTermCfg as ObsTerm
 from isaaclab.managers import RewardTermCfg as RewTerm
 from isaaclab.managers import TerminationTermCfg as DoneTerm
+from isaaclab.managers import SceneEntityCfg
 from isaaclab.scene import InteractiveSceneCfg
 from isaaclab.utils import configclass
 from isaaclab.actuators import ImplicitActuatorCfg
@@ -69,6 +70,25 @@ class G1RukaSceneCfg(InteractiveSceneCfg):
         },
     )
 
+    # target object (정육면체 큐브 - 크기 7.5cm, 질량 100g)
+    object = RigidObjectCfg(
+        prim_path="{ENV_REGEX_NS}/Object",
+        spawn=sim_utils.CuboidCfg(
+            size=(0.075, 0.075, 0.075),
+            rigid_props=sim_utils.RigidBodyPropertiesCfg(
+                max_depenetration_velocity=1.0,
+                disable_gravity=False,
+            ),
+            mass_props=sim_utils.MassPropertiesCfg(mass=0.1),
+            collision_props=sim_utils.CollisionPropertiesCfg(),
+            physics_material=sim_utils.RigidBodyMaterialCfg(),
+            visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.8, 0.1, 0.1)),
+        ),
+        init_state=RigidObjectCfg.InitialStateCfg(
+            pos=(0.4, 0.2, 0.0375),
+        ),
+    )
+
 
 @configclass
 class ActionsCfg:
@@ -100,6 +120,7 @@ class ObservationsCfg:
 
         joint_pos = ObsTerm(func=mdp.joint_pos_rel)
         joint_vel = ObsTerm(func=mdp.joint_vel_rel)
+        object_pos = ObsTerm(func=mdp.root_pos_w, params={"asset_cfg": SceneEntityCfg("object")})
         actions = ObsTerm(func=mdp.last_action)
 
         def __post_init__(self):
@@ -119,6 +140,16 @@ class EventCfg:
         params={
             "position_range": (1.0, 1.0),
             "velocity_range": (0.0, 0.0),
+        },
+    )
+
+    reset_object_position = EventTerm(
+        func=mdp.reset_root_state_uniform,
+        mode="reset",
+        params={
+            "pose_range": {"x": (0.35, 0.45), "y": (0.15, 0.25), "z": (0.0375, 0.0375)},
+            "velocity_range": {},
+            "asset_cfg": SceneEntityCfg("object"),
         },
     )
 
