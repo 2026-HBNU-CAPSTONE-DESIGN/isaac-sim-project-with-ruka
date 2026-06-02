@@ -5,7 +5,7 @@ G1 왼팔(7) + RUKA 손(15) = 22개 관절 작동 테스트 (IsaacLab 2.1.0)
 허리(waist) 3개는 고정.
 
 실행 (IsaacLab 폴더에서):
-  .\isaaclab.bat -p C:\isaac\isaac-lab-capstone-project\scripts\test_joints.py
+  .\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\test_joints.py
   옵션:
     --mode arm     팔 7개만 움직임
     --mode hand    손 15개만 움직임
@@ -18,7 +18,7 @@ from isaaclab.app import AppLauncher
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--usd", type=str,
-    default=r"C:\isaac\isaac-lab-capstone-project\combined\g1_left_arm_ruka_final.usd")
+    default=r"C:\isaac\isaac-sim-project-with-ruka\combined\g1_left_arm_ruka_final.usd")
 parser.add_argument("--mode", type=str, default="all", choices=["arm", "hand", "all"])
 AppLauncher.add_app_launcher_args(parser)
 args = parser.parse_args()
