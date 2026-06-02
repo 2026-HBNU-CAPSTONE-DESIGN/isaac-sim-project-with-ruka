@@ -66,4 +66,11 @@ isaaclab.bat -p scripts\tutorials\00_sim\create_empty.py
 .\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\test_joints.py --mode all
 ```
 
--
+## 3. G1 + RUKA 커스텀 학습 환경 실행 (기초 설정 - 바닥 및 로봇 스폰)
+
+커스텀 매니저 기반(Manager-based) RL 환경 설정을 실행하고 시각적으로 확인합니다. 이 환경은 바닥(Ground plane), 조명(Dome light), G1 + RUKA 로봇을 포함합니다.
+
+```powershell
+# 가상환경 활성화 후 실행
+.\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\run_env.py
+```
