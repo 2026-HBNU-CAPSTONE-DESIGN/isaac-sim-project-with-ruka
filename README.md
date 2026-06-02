@@ -53,6 +53,8 @@ isaaclab.bat -p scripts\tutorials\00_sim\create_empty.py
 
 ## 2. Isaac Sim 상에서 팔과 손 작동 확인
 
+- conda 가상환경 활성화시킨 후 실행해야 함.
+
 ```powershell
 # 팔만 움직이기
 .\isaaclab.bat -p C:\isaac\isaac-lab-capstone-project\scripts\test_joints.py --mode arm
