@@ -74,3 +74,34 @@ isaaclab.bat -p scripts\tutorials\00_sim\create_empty.py
 # 가상환경 활성화 후 실행
 .\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\run_env.py
 ```
+
+## 4. 강화학습 (PPO) 학습 및 최종 모델 확인
+
+이 프로젝트는 `rsl_rl` 기반의 PPO 알고리즘을 사용해 G1 + RUKA 로봇의 목표물 도달(Reach) 작업을 학습시킵니다.
+
+### 4.1. 강화학습 시작 (Train PPO)
+가상환경(`env_isaaclab`)이 활성화된 터미널에서 다음 명령어를 실행합니다.
+
+```powershell
+# 1) 헤드리스(Headless) 모드로 학습 진행 (속도가 빠르며 리소스를 적게 소모합니다, 기본 환경 수: 16)
+.\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\train_ppo.py --num_envs 16 --headless
+
+# 2) GUI를 띄운 상태로 실시간 관찰하며 학습 진행
+.\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\train_ppo.py --num_envs 8
+
+# (옵션) 최대 학습 반복 횟수(iteration) 지정 (기본값: 1000)
+.\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\train_ppo.py --num_envs 16 --max_iterations 500 --headless
+```
+
+### 4.2. 학습 결과 및 최종 모델 확인 (Play Trained Policy)
+학습 진행 중 혹은 완료 후 저장된 가중치 체크포인트(`.pt` 파일)를 로드하여 시각적으로 동작 성능을 확인합니다.
+
+```powershell
+# 1) 가장 최근에 진행한 학습 세션의 마지막 체크포인트를 자동으로 찾아 로드하여 시동
+.\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\play_ppo.py --num_envs 1
+
+# 2) 특정 학습 결과의 특정 체크포인트를 지정하여 실행
+.\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\play_ppo.py --num_envs 1 --checkpoint "C:\isaac\isaac-sim-project-with-ruka\logs\rsl_rl\g1_ruka_reach\YYYY-MM-DD_HH-MM-SS\model_X.pt"
+```
+* **로그 및 체크포인트 경로**: 학습 기록 및 파라미터는 `C:\isaac\isaac-sim-project-with-ruka\logs\rsl_rl\g1_ruka_reach\` 하위 디렉토리에 타임스탬프별로 저장됩니다.
+

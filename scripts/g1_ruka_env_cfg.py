@@ -17,6 +17,36 @@ from isaaclab.scene import InteractiveSceneCfg
 from isaaclab.utils import configclass
 from isaaclab.actuators import ImplicitActuatorCfg
 import isaaclab.envs.mdp as mdp
+import torch
+import gymnasium as gym
+from isaaclab.assets import Articulation, RigidObject
+from isaaclab.envs import ManagerBasedRLEnv
+from g1_ruka_ppo_cfg import G1RukaPPORunnerCfg
+
+
+def object_hand_distance(
+    env: ManagerBasedRLEnv,
+    std: float,
+    object_cfg: SceneEntityCfg = SceneEntityCfg("object"),
+    robot_cfg: SceneEntityCfg = SceneEntityCfg("robot", body_names=["left_wrist_yaw_link"]),
+) -> torch.Tensor:
+    """Reward for moving the hand close to the target object using tanh kernel."""
+    object: RigidObject = env.scene[object_cfg.name]
+    robot: Articulation = env.scene[robot_cfg.name]
+    
+    # Resolve body_ids dynamically if not already resolved by the manager
+    if isinstance(robot_cfg.body_ids, slice):
+        body_ids, _ = robot.find_bodies(robot_cfg.body_names)
+    else:
+        body_ids = robot_cfg.body_ids
+
+    # target object position: (num_envs, 3)
+    object_pos = object.data.root_pos_w
+    # palm link position: (num_envs, 3)
+    hand_pos = robot.data.body_pos_w[:, body_ids[0]]
+    # distance: (num_envs,)
+    dist = torch.norm(object_pos - hand_pos, dim=1)
+    return 1.0 - torch.tanh(dist / std)
 
 
 @configclass
@@ -85,7 +115,7 @@ class G1RukaSceneCfg(InteractiveSceneCfg):
             visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.8, 0.1, 0.1)),
         ),
         init_state=RigidObjectCfg.InitialStateCfg(
-            pos=(0.4, 0.2, 0.0375),
+            pos=(0.24, 0.12, 0.0375),
         ),
     )
 
@@ -147,7 +177,7 @@ class EventCfg:
         func=mdp.reset_root_state_uniform,
         mode="reset",
         params={
-            "pose_range": {"x": (0.35, 0.45), "y": (0.15, 0.25), "z": (0.0375, 0.0375)},
+            "pose_range": {"x": (0.20, 0.28), "y": (0.08, 0.16), "z": (0.0375, 0.0375)},
             "velocity_range": {},
             "asset_cfg": SceneEntityCfg("object"),
         },
@@ -158,10 +188,20 @@ class EventCfg:
 class RewardsCfg:
     """Reward terms for the MDP."""
 
-    # 기본 더미 보상 설정 (시뮬레이터 로드용)
-    dummy_reward = RewTerm(
-        func=lambda env: 0.0,
-        weight=0.0,
+    object_hand_distance = RewTerm(
+        func=object_hand_distance,
+        weight=10.0,
+        params={"std": 0.2, "robot_cfg": SceneEntityCfg("robot", body_names=["left_wrist_yaw_link"])},
+    )
+
+    action_rate = RewTerm(
+        func=mdp.action_rate_l2,
+        weight=-0.01,
+    )
+
+    joint_vel = RewTerm(
+        func=mdp.joint_vel_l2,
+        weight=-0.0001,
     )
 
 
@@ -195,3 +235,15 @@ class G1RukaEnvCfg(ManagerBasedRLEnvCfg):
         self.viewer.eye = (1.5, 1.5, 1.5)
         self.viewer.lookat = (0.0, 0.0, 0.3)
         self.sim.dt = 1.0 / 60.0
+
+
+# Register Gym environment
+gym.register(
+    id="Isaac-G1-Ruka-v0",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
+    disable_env_checker=True,
+    kwargs={
+        "cfg_entry_point": G1RukaEnvCfg,
+        "rsl_rl_cfg_entry_point": G1RukaPPORunnerCfg,
+    },
+)
