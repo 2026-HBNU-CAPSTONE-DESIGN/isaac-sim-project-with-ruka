@@ -87,7 +87,7 @@ isaaclab.bat -p scripts\tutorials\00_sim\create_empty.py
 .\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\train_ppo.py --num_envs 16 --headless
 
 # 2) GUI를 띄운 상태로 실시간 관찰하며 학습 진행
-.\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\train_ppo.py --num_envs 8
+.\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\train_ppo.py --num_envs 16
 
 # (옵션) 최대 학습 반복 횟수(iteration) 지정 (기본값: 1000)
 .\isaaclab.bat -p C:\isaac\isaac-sim-project-with-ruka\scripts\train_ppo.py --num_envs 16 --max_iterations 500 --headless

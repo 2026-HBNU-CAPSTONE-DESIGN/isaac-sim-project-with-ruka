@@ -49,6 +49,100 @@ def object_hand_distance(
     return 1.0 - torch.tanh(dist / std)
 
 
+def hand_position_w(
+    env: ManagerBasedRLEnv,
+    robot_cfg: SceneEntityCfg = SceneEntityCfg("robot", body_names=["left_wrist_yaw_link"]),
+) -> torch.Tensor:
+    """World position of the hand (left wrist yaw link)."""
+    robot: Articulation = env.scene[robot_cfg.name]
+    if isinstance(robot_cfg.body_ids, slice):
+        body_ids, _ = robot.find_bodies(robot_cfg.body_names)
+    else:
+        body_ids = robot_cfg.body_ids
+    return robot.data.body_pos_w[:, body_ids[0]]
+
+
+def object_relative_to_hand(
+    env: ManagerBasedRLEnv,
+    object_cfg: SceneEntityCfg = SceneEntityCfg("object"),
+    robot_cfg: SceneEntityCfg = SceneEntityCfg("robot", body_names=["left_wrist_yaw_link"]),
+) -> torch.Tensor:
+    """Relative position of the object with respect to the hand: object_pos - hand_pos."""
+    object: RigidObject = env.scene[object_cfg.name]
+    robot: Articulation = env.scene[robot_cfg.name]
+    if isinstance(robot_cfg.body_ids, slice):
+        body_ids, _ = robot.find_bodies(robot_cfg.body_names)
+    else:
+        body_ids = robot_cfg.body_ids
+
+    object_pos = object.data.root_pos_w
+    hand_pos = robot.data.body_pos_w[:, body_ids[0]]
+    return object_pos - hand_pos
+
+
+def joint_deviation_penalty(
+    env: ManagerBasedRLEnv,
+    joint_names: list[str],
+    robot_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
+) -> torch.Tensor:
+    """Penalize deviation of specific joint positions from their default values."""
+    robot: Articulation = env.scene[robot_cfg.name]
+    
+    # Find joint indices
+    joint_ids, _ = robot.find_joints(joint_names)
+    
+    # Current and default positions
+    curr_pos = robot.data.joint_pos[:, joint_ids]
+    default_pos = robot.data.default_joint_pos[:, joint_ids]
+    
+    # L2 deviation: (num_envs,)
+    return torch.sum(torch.square(curr_pos - default_pos), dim=1)
+
+
+def multi_stage_manipulation_rewards(
+    env: ManagerBasedRLEnv,
+    key: str,
+    robot_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
+    object_cfg: SceneEntityCfg = SceneEntityCfg("object"),
+) -> torch.Tensor:
+    """Multi-stage rewards for reaching, lifting, and placing the object."""
+    robot: Articulation = env.scene[robot_cfg.name]
+    object: RigidObject = env.scene[object_cfg.name]
+
+    # Find body ids
+    palm_ids, _ = robot.find_bodies("left_wrist_yaw_link")
+    pelvis_ids, _ = robot.find_bodies("pelvis")
+
+    # Positions
+    palm_pos = robot.data.body_pos_w[:, palm_ids[0]]
+    pelvis_pos = robot.data.body_pos_w[:, pelvis_ids[0]]
+    object_pos = object.data.root_pos_w
+
+    # Place target is 5cm in front of the pelvis, and 15cm above it
+    target_place_pos = pelvis_pos + torch.tensor([0.05, 0.0, 0.15], device=env.device)
+
+    # Distances
+    dist_hand_obj = torch.norm(object_pos - palm_pos, dim=1)
+    dist_obj_target = torch.norm(object_pos - target_place_pos, dim=1)
+
+    # Stages
+    is_reached = (dist_hand_obj < 0.10).float()
+    
+    # Initial cube height is 0.0375
+    lift_height = object_pos[:, 2] - 0.0375
+    lift_height = torch.clamp(lift_height, min=0.0)
+    is_lifted = (lift_height > 0.05).float()
+
+    if key == "reach":
+        return 1.0 - torch.tanh(dist_hand_obj / 0.25)
+    elif key == "lift":
+        return is_reached * torch.clamp(lift_height * 10.0, max=1.0)
+    elif key == "place":
+        return is_lifted * (1.0 - torch.tanh(dist_obj_target / 0.15))
+    else:
+        return torch.zeros_like(dist_hand_obj)
+
+
 @configclass
 class G1RukaSceneCfg(InteractiveSceneCfg):
     """Configuration for the G1 + RUKA scene."""
@@ -88,8 +182,8 @@ class G1RukaSceneCfg(InteractiveSceneCfg):
             # RUKA 손가락 조인트: 약한 PD 제어 (가벼운 링크)
             "hand": ImplicitActuatorCfg(
                 joint_names_expr=["ruka_.*"],
-                stiffness=5.0,
-                damping=0.5,
+                stiffness=2.0,
+                damping=0.2,
             ),
             # 허리 조인트: 고정 (강한 PD 제어)
             "waist": ImplicitActuatorCfg(
@@ -150,7 +244,9 @@ class ObservationsCfg:
 
         joint_pos = ObsTerm(func=mdp.joint_pos_rel)
         joint_vel = ObsTerm(func=mdp.joint_vel_rel)
+        hand_pos = ObsTerm(func=hand_position_w)
         object_pos = ObsTerm(func=mdp.root_pos_w, params={"asset_cfg": SceneEntityCfg("object")})
+        object_rel_hand = ObsTerm(func=object_relative_to_hand)
         actions = ObsTerm(func=mdp.last_action)
 
         def __post_init__(self):
@@ -188,10 +284,28 @@ class EventCfg:
 class RewardsCfg:
     """Reward terms for the MDP."""
 
-    object_hand_distance = RewTerm(
-        func=object_hand_distance,
-        weight=10.0,
-        params={"std": 0.2, "robot_cfg": SceneEntityCfg("robot", body_names=["left_wrist_yaw_link"])},
+    # object_hand_distance = RewTerm(
+    #     func=object_hand_distance,
+    #     weight=10.0,
+    #     params={"std": 0.2, "robot_cfg": SceneEntityCfg("robot", body_names=["left_wrist_yaw_link"])},
+    # )
+
+    reward_reach = RewTerm(
+        func=multi_stage_manipulation_rewards,
+        weight=15.0,
+        params={"key": "reach"},
+    )
+
+    reward_lift = RewTerm(
+        func=multi_stage_manipulation_rewards,
+        weight=15.0,
+        params={"key": "lift"},
+    )
+
+    reward_place = RewTerm(
+        func=multi_stage_manipulation_rewards,
+        weight=20.0,
+        params={"key": "place"},
     )
 
     action_rate = RewTerm(
@@ -202,6 +316,18 @@ class RewardsCfg:
     joint_vel = RewTerm(
         func=mdp.joint_vel_l2,
         weight=-0.0001,
+    )
+
+    wrist_penalty = RewTerm(
+        func=joint_deviation_penalty,
+        weight=-0.5,
+        params={
+            "joint_names": [
+                "left_wrist_roll_joint",
+                "left_wrist_pitch_joint",
+                "left_wrist_yaw_joint",
+            ]
+        },
     )
 
 
@@ -231,7 +357,7 @@ class G1RukaEnvCfg(ManagerBasedRLEnvCfg):
         """Post initialization."""
         self.decimation = 2
         self.sim.render_interval = self.decimation
-        self.episode_length_s = 5.0
+        self.episode_length_s = 8.0
         self.viewer.eye = (1.5, 1.5, 1.5)
         self.viewer.lookat = (0.0, 0.0, 0.3)
         self.sim.dt = 1.0 / 60.0
